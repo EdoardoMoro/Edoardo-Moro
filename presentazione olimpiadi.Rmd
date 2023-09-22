@@ -1,0 +1,253 @@
+---
+title: "Analisi sulle Olimpiadi"
+output: xaringan::moon_reader
+lib_dir: libs
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(readxl)
+library(ggplot2)
+
+library(xaringan)
+
+library(dplyr)
+
+library(magrittr)
+
+
+
+
+medaglie<-read.csv("C:/Users/edomo/Desktop/olympic_medals.csv")
+host<-read.csv("C:/Users/edomo/Desktop/olympic_hosts.csv")
+atletifull<-read.csv("C:/Users/edomo/Desktop/athlete_events.csv")
+
+#chi ha vinto piu medaglie?
+medaglienazioni=medaglie%>%
+  group_by(country_3_letter_code) %>%
+  summarise(count = n()) %>% 
+  arrange(-count)%>%
+  head(20)
+plotmedaglienazioni=ggplot(medaglienazioni,aes(x =country_3_letter_code , y = count)) +
+  geom_bar(stat="identity")
+
+
+
+#sport piu popolari
+sportpopolari=atletifull%>%
+  group_by(Sport) %>%
+  summarise(count = n()) %>% 
+  arrange(-count)%>%
+  head(8)
+ggplot(sportpopolari,aes(x = Sport , y = count)) +
+  geom_bar(stat="identity")
+
+#chi ha hostato più olimpiadi?
+tophosts=host%>%
+  
+  group_by(game_location) %>%
+  summarise(count = n()) %>% 
+  arrange(-count)%>%
+  head(10)
+ggplot(tophosts,aes(x =game_location , y = count)) +
+  geom_bar(stat="identity")
+
+
+
+
+#gareggiare in casa aiuta a vincere?
+medaglieogniolimpiade=medaglie%>%
+  group_by(country_3_letter_code,slug_game) %>%
+  summarise(count = n()) %>%
+  arrange(- count)
+#andamento usa medaglie
+medaglieogniolimpiadeusa=medaglieogniolimpiade%>%
+  filter(country_3_letter_code == "USA")  %>% 
+  head(8)
+
+ggplot(medaglieogniolimpiadeusa, aes(x = slug_game, y = count)) +
+  geom_point()   
+
+#andamento ita medaglie
+medaglieogniolimpiadeita=medaglieogniolimpiade%>%
+  filter(country_3_letter_code == "ITA")  %>% 
+  head(8)
+
+ggplot(medaglieogniolimpiadeita, aes(x = slug_game, y = count)) +
+  geom_point()   
+
+#andamento GBR medaglie
+medaglieogniolimpiadeGBR=medaglieogniolimpiade%>%
+  filter(country_3_letter_code == "GBR")  %>% 
+  head(8)
+
+ggplot(medaglieogniolimpiadeGBR, aes(x = slug_game, y = count)) +
+  geom_point()   
+  
+#top  sport italiani
+topsportita=medaglie%>%
+  filter(country_3_letter_code =="ITA")%>%
+  group_by(discipline_title) %>%
+  summarise(count = n()) %>% 
+  arrange(-count)%>%
+  head(8)
+ggplot(topsportita,aes(x = discipline_title , y = count)) +
+  geom_bar(stat="identity")
+#top  sport usa
+topsportusa=medaglie%>%
+  filter(country_3_letter_code =="USA")%>%
+  group_by(discipline_title) %>%
+  summarise(count = n()) %>% 
+  arrange(-count)%>%
+  head(8)
+ggplot(topsportusa,aes(x =discipline_title, y = count)) +
+  geom_bar(stat="identity")
+#età media maschile
+età=atletifull[!is.na(atletifull$Age), ]
+etàmediaM= età%>%
+  filter(Sex=="M")
+  
+  
+  ggplot(data =etàmediaM) +
+    geom_boxplot(mapping = aes(y = Age) ) 
+  
+#età media femminile
+  etàmediaF= età%>%
+    filter(Sex=="F")
+ 
+  
+  ggplot(data =etàmediaF) +
+    geom_boxplot(mapping = aes(y = Age) )
+
+  
+  
+  #perchè alcuni partecipanti sono cosi vecchi?
+  etàUP50= età%>%
+    filter(Age > 50)%>%
+    group_by(Sport) %>%
+    summarise(count = n()) %>% 
+    arrange(-count)%>%
+    head(5)
+  ggplot(etàUP50,aes(x = Sport , y = count)) +
+    geom_bar(stat="identity")
+  
+    
+  
+    
+
+
+
+```
+##Cosa andiamo ad analizzare
+Andremo ad analizzare diversi dataset riguardanti le olimpiadi.<br>
+lo studio si concentra su:<br>
+-Che nazione ha vinto più medaglie olimpiche<br>
+-Qual'è lo sport più popolare delle olimpiadi<br>
+-Qual'è lo sport dove gli italiani performano meglio<br>
+-chi ha ospitato più olimpiadi<br>
+-Gareggiare in casa aiuta a migliorare le performance<br>
+-età media degli atleti maschili e femminili<br>
+##Dataset utilizzati:
+ho utilizzato principalmente 3 dataset:<br>
+-Dataset sui vincitori delle medaglie olimpiche:<br>
+questo dataset contiene tutti gli atleti che hanno vinto una medaglia olimpica,indicando nome sport e nazionalità<br>
+-dataset sulle nazioni che hanno ospitato le olimpiadi<br>
+-dataset sugli atleti:
+questo dataset contiene le informazioni sugli atleti che hanno partecipato alle olimpiadi, come età, sesso e nazionalità<br>
+
+---
+
+##Chi ha vinto più medaglie?
+
+```{r topmedaglie, fig.cap="top 10 paesi con più medaglie", echo=FALSE, warning=FALSE, message=FALSE}
+
+plotmedaglienazioni
+
+```
+---
+##Qual'è lo sport più popolare?
+
+```{r topsport, fig.cap="top sport",out.width='70%', fig.align='center', echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(sportpopolari,aes(x =Sport , y = count)) +
+  geom_bar(stat="identity")
+```
+---
+##In quale sport gli italiani sono più bravi?
+```{r topsportita, fig.cap="top sport ita",out.width='70%', fig.align='center', echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(topsportita,aes(x = discipline_title , y = count)) +
+  geom_bar(stat="identity")
+```
+---
+##Chi ha ospitato più olimpiadi?
+
+```{r hostsum, fig.cap="hostsum", echo=FALSE,out.width='70%', fig.align='center', warning=FALSE, message=FALSE}
+ggplot(tophosts,aes(x =game_location , y = count)) +
+  geom_bar(stat="identity")
+```
+---
+##Gareggiare in casa aiuta a vincere?
+andiamo ora ad analizzare le performance a livello di medaglie di 3 nazioni ( USA, Italia e Inghilterra) per scoprire se effettivamente gareggiare in casa porta gli atleti ad avere risultati migliori
+---
+##USA
+```{r usamedals, fig.cap="usamedals",out.width='70%', fig.align='center', echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(medaglieogniolimpiadeusa, aes(x = slug_game, y = count)) +
+  geom_point() 
+
+```
+
+---
+##Italia
+```{r itamedals, fig.cap="itamedals",out.width='70%', fig.align='center', echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(medaglieogniolimpiadeita, aes(x = slug_game, y = count)) +
+  geom_point()   
+
+```
+---
+##Inghilterra
+```{r GBRmedals, fig.cap="GBRmedals", out.width='70%', fig.align='center',echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(medaglieogniolimpiadeGBR, aes(x = slug_game, y = count)) +
+  geom_point()   
+```
+
+
+---
+
+##Età media maschile
+```{r etàM, fig.cap="etàM", out.width='70%', fig.align='center',echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(data =etàmediaM) +
+    geom_boxplot(mapping = aes(y = Age) ) 
+```
+---
+##Età media femminile
+```{r etàF, fig.cap="etàF",out.width='70%', fig.align='center', echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(data =etàmediaF) +
+    geom_boxplot(mapping = aes(y = Age) ) 
+```
+---
+##Perchè ci sono tanti outsider anche molto vecchi?
+```{r età50, fig.cap="età up 50",out.width='70%', fig.align='center', echo=FALSE, warning=FALSE, message=FALSE}
+ ggplot(etàUP50,aes(x = Sport , y = count)) +
+    geom_bar(stat="identity")
+
+```
+---
+##che risultati abbiamo ottenuto?
+-La nazione che ha vinto più medaglie sono gli USA, l'Italia si piazza al settimo posto<br>
+-Lo sport più popolare al mondo è l'atletica, seguita poi dalla ginnastica artistica e dal nuoto<br>
+-Lo sport in cui gli Italiani sono più bravi è la scherma, seguita poi dall'atletica e dal canottaggio<br>
+-La nazione che ha ospitato più olimpiadi sono gli USA, seguiti da Francia e Giappone<br>
+-Gareggiare in casa aiuta a migliorare le performance degli atleti, infatti in tutti e 3 le nazioni prese in analisi quando si gareggia in casa si hanno prestazioni record o ben sopra alla media<br><br>
+
+-L'età media degli atleti maschili è 25 anni mentre quella di quelli femminili è 23<br>
+
+-La presenza di molti outsider nell'età è dovuta alla presenza dal 1912 al 1948 delle competizioni d'arte, dove potevano partecipare persone di qualsiasi età.<br>
+
+
+
+
+
+
