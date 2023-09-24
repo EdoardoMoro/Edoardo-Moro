@@ -1,5 +1,6 @@
 ---
 title: "Analisi sulle Olimpiadi"
+author: "Edoardo Moro"
 output: xaringan::moon_reader
 lib_dir: libs
 
@@ -154,14 +155,16 @@ ho utilizzato principalmente 3 dataset:<br>
 -Dataset sui vincitori delle medaglie olimpiche:<br>
 questo dataset contiene tutti gli atleti che hanno vinto una medaglia olimpica,indicando nome sport e nazionalità<br>
 -dataset sulle nazioni che hanno ospitato le olimpiadi<br>
+entrambi i dataset reperibili al seguente link: https://www.kaggle.com/datasets/piterfm/olympic-games-medals-19862018 <br>
 -dataset sugli atleti:
 questo dataset contiene le informazioni sugli atleti che hanno partecipato alle olimpiadi, come età, sesso e nazionalità<br>
+reperibile al seguente link:https://www.kaggle.com/datasets/heesoo37/120-years-of-olympic-history-athletes-and-results
 
 ---
 
 ##Chi ha vinto più medaglie?
 
-```{r topmedaglie, fig.cap="top 10 paesi con più medaglie", echo=FALSE, warning=FALSE, message=FALSE}
+```{r topmedaglie, fig.cap="", fig.align='center',echo=FALSE, warning=FALSE, message=FALSE}
 
 plotmedaglienazioni
 
@@ -235,6 +238,10 @@ ggplot(data =etàmediaF) +
 
 ```
 ---
+##Outsider over-50
+Dal grafico notiamo come praticamente tutti gli atleti sopra a 50 anni pratichino come disciplina le competizioni d'arte.<br>
+le competizioni d'arte hanno debuttato alle Olimpiadi di Stoccolma del 1912, erano delle competizioni che comprendevano la pittura, scultura, architettura, letteratura e musica e sono andate avanti fino al 1948
+---
 ##che risultati abbiamo ottenuto?
 -La nazione che ha vinto più medaglie sono gli USA, l'Italia si piazza al settimo posto<br>
 -Lo sport più popolare al mondo è l'atletica, seguita poi dalla ginnastica artistica e dal nuoto<br>
@@ -245,6 +252,7 @@ ggplot(data =etàmediaF) +
 -L'età media degli atleti maschili è 25 anni mentre quella di quelli femminili è 23<br>
 
 -La presenza di molti outsider nell'età è dovuta alla presenza dal 1912 al 1948 delle competizioni d'arte, dove potevano partecipare persone di qualsiasi età.<br>
+Grazie per l'attenzione
 
 
 
